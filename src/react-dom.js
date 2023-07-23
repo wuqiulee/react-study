@@ -31,6 +31,12 @@ function updateProps(dom, oldProps, newProps) {
     }
   }
 }
+function mountFunctionComponent(vdom) {
+  const { type, props } = vdom;
+  const renderDom = type(props);
+  return createDOM(renderDom);
+}
+
 /**
  * 根据vdom创建真实dom
  * @param {*} vdom
@@ -38,12 +44,14 @@ function updateProps(dom, oldProps, newProps) {
  */
 function createDOM(vdom) {
   const { type, props, content } = vdom;
-  console.log(vdom, "vdom");
   // 真实dom
   let dom = null;
   if (type === REACT_TEXT) {
     // 文本节点
     dom = document.createTextNode(content);
+  } else if (typeof type === "function") {
+    // 处理函数组件
+    return mountFunctionComponent(vdom);
   } else {
     // dom元素
     dom = document.createElement(type);
