@@ -1,4 +1,5 @@
 import { wrapToVdom } from "./utils";
+import { Component } from "./component";
 /**
  * 将jsx转换为虚拟dom
  * @param {*} type 元素类型
@@ -10,7 +11,7 @@ function createElement(type, config, children) {
   // 如果函数形参超过3个说明有多个子节点，则需要用数组表示
   if (arguments.length > 3) {
     props.children = Array.prototype.slice.call(arguments, 2).map(wrapToVdom);
-  } else {
+  } else if (children) {
     props.children = wrapToVdom(children);
   }
   return {
@@ -21,5 +22,6 @@ function createElement(type, config, children) {
 
 const react = {
   createElement,
+  Component,
 };
 export default react;

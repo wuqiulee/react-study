@@ -33,8 +33,15 @@ function updateProps(dom, oldProps, newProps) {
 }
 function mountFunctionComponent(vdom) {
   const { type, props } = vdom;
-  const renderDom = type(props);
-  return createDOM(renderDom);
+  const renderVdom = type(props);
+  return createDOM(renderVdom);
+}
+function mountClassComponent(vdom) {
+  const { type, props } = vdom;
+  const classInstance = new type(props);
+  // 执行类组件的render方法，返回vdom
+  const renderVdom = classInstance.render();
+  return createDOM(renderVdom);
 }
 
 /**
@@ -50,8 +57,13 @@ function createDOM(vdom) {
     // 文本节点
     dom = document.createTextNode(content);
   } else if (typeof type === "function") {
-    // 处理函数组件
-    return mountFunctionComponent(vdom);
+    if (type.isReactComponent) {
+      // 处理类组件
+      return mountClassComponent(vdom);
+    } else {
+      // 处理函数组件
+      return mountFunctionComponent(vdom);
+    }
   } else {
     // dom元素
     dom = document.createElement(type);
@@ -73,7 +85,6 @@ function createDOM(vdom) {
  */
 function render(vdom, container) {
   const root = createDOM(vdom);
-  console.log(container, vdom);
   container.appendChild(root);
 }
 
