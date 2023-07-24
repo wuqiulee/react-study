@@ -1,5 +1,5 @@
-import React from "./react";
-import ReactDom from "./react-dom";
+import React from "react";
+import ReactDom from "react-dom";
 // let element = React.createElement(
 //   "div",
 //   {
@@ -21,11 +21,26 @@ import ReactDom from "./react-dom";
 //   );
 // }
 class Bar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { date: new Date() };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.tick();
+    }, 500);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  tick = () => {
+    this.setState({ date: new Date() });
+  };
   render() {
     return (
       <div style={{ color: "red" }} className="bg">
-        <span>name:</span>
-        {this.props.name}
+        <span>date:</span>
+        {this.state.date.toLocaleTimeString()}
       </div>
     );
   }
