@@ -26,6 +26,9 @@ function updateProps(dom, oldProps, newProps) {
       for (let attr in styleObj) {
         dom.style[attr] = styleObj[attr];
       }
+    } else if (key.startsWith("on")) {
+      // 绑定事件
+      dom[key.toLocaleLowerCase()] = newProps[key];
     } else {
       dom[key] = newProps[key];
     }
@@ -84,6 +87,7 @@ function createDOM(vdom) {
  * @param {*} vdom 虚拟dom
  */
 function render(vdom, container) {
+  debugger;
   const root = createDOM(vdom);
   container.appendChild(root);
 }
