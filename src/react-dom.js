@@ -34,16 +34,25 @@ function updateProps(dom, oldProps, newProps) {
     }
   }
 }
+/**
+ * 挂载函数组件
+ */
 function mountFunctionComponent(vdom) {
   const { type, props } = vdom;
   const renderVdom = type(props);
+  vdom.oldRenderVdom = renderVdom;
   return createDOM(renderVdom);
 }
+/**
+ * 挂载类组件
+ */
 function mountClassComponent(vdom) {
   const { type, props } = vdom;
   const classInstance = new type(props);
   // 执行类组件的render方法，返回vdom
   const renderVdom = classInstance.render();
+  // 将vdom存到类的实例上 用于后面的dom-diff,给类实例和外层类组件都存一份
+  classInstance.oldRenderVdom = vdom.oldRenderVdom = renderVdom;
   return createDOM(renderVdom);
 }
 
@@ -80,6 +89,8 @@ function createDOM(vdom) {
       render(props.children, dom);
     }
   }
+  // 保存下vdom对应的真实dom，用于后续dom-diff
+  vdom.dom = dom;
   return dom;
 }
 /**
@@ -90,6 +101,24 @@ function render(vdom, container) {
   debugger;
   const root = createDOM(vdom);
   container.appendChild(root);
+}
+
+/**
+ * 根据vdom找对应的真实dom
+ * @param {*} vdom
+ * @returns
+ */
+export function findDOM(vdom) {
+  const { type } = vdom;
+  let dom = null;
+  // 如果是组件(类或函数组件)，则通过vdom上保存的oldRenderVdom递归调用findDOM
+  if (typeof type === "function") {
+    // 防止组件返回的还是组件 所以必须递归
+    dom = findDOM(vdom.oldRenderVdom);
+  } else {
+    dom = vdom.dom;
+  }
+  return dom;
 }
 
 const ReactDom = {
