@@ -26,7 +26,6 @@ class Bar extends React.Component {
     this.state = { count: 0 };
   }
   handleClick = () => {
-    debugger;
     this.setState({ count: this.state.count + 1 });
     console.log(this.state.count);
   };
@@ -40,5 +39,5 @@ class Bar extends React.Component {
   }
 }
 let element = <Bar />;
-console.log(element);
+console.log(element, "element");
 ReactDom.render(element, document.getElementById("root"));

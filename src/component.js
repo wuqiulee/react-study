@@ -1,4 +1,4 @@
-import { findDOM } from "./react-dom";
+import { findDOM, compareTwoVdom } from "./react-dom";
 /**
  * 是否更新组件
  * @param {*} classInstance
@@ -77,12 +77,13 @@ export class Component {
   forceUpdate() {
     // 获取老的vdom
     const oldRenderVdom = this.oldRenderVdom;
-    // 关键位置 根据老的vdom找出老的真实dom
+    // 关键步骤 根据老的vdom找出老的真实dom
     const oldDOM = findDOM(oldRenderVdom);
     // 获取新的vdom
     const newRenderVdom = this.render();
+    console.log(oldDOM.parentNode, "oldDOM", oldRenderVdom);
     // 比较两颗vdom，得到差异更新到真实dom上
-    // compareTwoVdom(oldDOM.parentNode, oldRenderVdom, newRenderVdom);
+    compareTwoVdom(oldDOM.parentNode, oldRenderVdom, newRenderVdom);
     // 更新老的vdom
     this.oldRenderVdom = newRenderVdom;
   }
