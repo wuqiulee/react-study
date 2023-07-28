@@ -122,14 +122,13 @@ export function findDOM(vdom) {
 
 /**
  * 根据新老vdom,找出差异并更新到真实dom上
- * @param {*} parentDOM 分dom元素
+ * @param {*} parentDOM 父dom元素
  * @param {*} oldVdom 老的vdom
  * @param {*} newVdom 新的vdom
  */
 export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
   const oldDOM = findDOM(oldVdom);
   const newDOM = createDOM(newVdom);
-  console.log(newDOM, "newDOM", newVdom, oldVdom);
   // 新的真实dom替换老的真实dom
   parentDOM.replaceChild(newDOM, oldDOM);
 }
