@@ -1,4 +1,10 @@
 import { findDOM, compareTwoVdom } from "./react-dom";
+const UpdateQueue = {
+  // 控制是否批量更新
+  isBatchingUpdate: false,
+  updaters: [],
+  batchUpdate() {},
+};
 /**
  * 是否更新组件
  * @param {*} classInstance
@@ -48,8 +54,13 @@ class Updater {
     }
   }
   emitUpdate() {
-    // 更新组件
-    this.updateComponent();
+    // 批量更新将当前类实例存起来
+    if (UpdateQueue.isBatchingUpdate) {
+      UpdateQueue.updaters.push(this);
+    } else {
+      // 更新组件
+      this.updateComponent();
+    }
   }
   // 每调一次setState都执行，将state和回调函数往队列里push
   addState(partialState, callback) {
@@ -81,7 +92,6 @@ export class Component {
     const oldDOM = findDOM(oldRenderVdom);
     // 获取新的vdom
     const newRenderVdom = this.render();
-    console.log(oldDOM.parentNode, "oldDOM", oldRenderVdom);
     // 比较两颗vdom，得到差异更新到真实dom上
     compareTwoVdom(oldDOM.parentNode, oldRenderVdom, newRenderVdom);
     // 更新老的vdom
