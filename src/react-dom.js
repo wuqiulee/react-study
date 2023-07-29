@@ -1,4 +1,5 @@
 import { REACT_TEXT } from "./constants";
+import { addEvent } from "./event";
 /**
  * 渲染多个子vdom
  * @param {*} childrenVdoms
@@ -28,7 +29,8 @@ function updateProps(dom, oldProps, newProps) {
       }
     } else if (key.startsWith("on")) {
       // 绑定事件
-      dom[key.toLocaleLowerCase()] = newProps[key];
+      // dom[key.toLocaleLowerCase()] = newProps[key];
+      addEvent(dom, key.toLocaleLowerCase(), newProps[key]);
     } else {
       dom[key] = newProps[key];
     }

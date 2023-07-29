@@ -27,6 +27,7 @@ class Bar extends React.Component {
   }
   handleClick = () => {
     this.setState({ count: this.state.count + 1 });
+    this.setState({ count: this.state.count + 2 });
     console.log(this.state.count);
   };
   render() {

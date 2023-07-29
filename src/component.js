@@ -1,16 +1,22 @@
 import { findDOM, compareTwoVdom } from "./react-dom";
-const UpdateQueue = {
+export const UpdateQueue = {
   // 控制是否批量更新
   isBatchingUpdate: false,
   updaters: [],
-  batchUpdate() {},
+  batchUpdate() {
+    for (let updater of UpdateQueue.updaters) {
+      updater.updateComponent();
+    }
+    UpdateQueue.isBatchingUpdate = false;
+    UpdateQueue.updaters.length = 0;
+  },
 };
 /**
  * 是否更新组件
  * @param {*} classInstance
  * @param {*} nextState
  */
-function shouldUpdate(classInstance, nextState) {
+function shouldUpdate(classInstance, nextProps, nextState) {
   // 更新组件状态
   classInstance.state = nextState;
   // 更新组件
@@ -48,12 +54,13 @@ class Updater {
     return state;
   }
   updateComponent() {
-    const { classInstance, pendingStates } = this;
-    if (pendingStates.length) {
-      shouldUpdate(classInstance, this.getState());
+    const { classInstance, pendingStates, nextProps } = this;
+    if (pendingStates.length || nextProps) {
+      shouldUpdate(classInstance, nextProps, this.getState());
     }
   }
-  emitUpdate() {
+  emitUpdate(nextProps) {
+    this.nextProps = nextProps;
     // 批量更新将当前类实例存起来
     if (UpdateQueue.isBatchingUpdate) {
       UpdateQueue.updaters.push(this);
