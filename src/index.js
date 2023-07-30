@@ -20,25 +20,32 @@ import ReactDom from "./react-dom";
 //     </h1>
 //   );
 // }
+class Input extends React.Component {
+  constructor(props) {
+    super(props);
+    this.ref = React.createRef();
+  }
+  getFocus = () => {
+    console.log("first");
+    this.ref.current.focus();
+  };
+  render() {
+    return <input ref={this.ref} />;
+  }
+}
 class Bar extends React.Component {
   constructor(props) {
     super(props);
-    this.A = React.createRef();
-    this.B = React.createRef();
-    this.C = React.createRef();
+    this.inputRef = React.createRef();
   }
   handleClick = () => {
-    this.C.current.value =
-      Number(this.A.current.value) + Number(this.B.current.value);
-    // console.log(this.state.count);
+    this.inputRef.current.getFocus();
   };
   render() {
     return (
       <div>
-        <input ref={this.A} />
-        <input ref={this.B} />
+        <Input ref={this.inputRef} />
         <button onClick={this.handleClick}>+</button>
-        <input ref={this.C} />
       </div>
       // <div>
       //   <div>{this.state.count}</div>
