@@ -20,31 +20,23 @@ import ReactDom from "./react-dom";
 //     </h1>
 //   );
 // }
-class Input extends React.Component {
-  constructor(props) {
-    super(props);
-    this.ref = React.createRef();
-  }
-  getFocus = () => {
-    console.log("first");
-    this.ref.current.focus();
-  };
-  render() {
-    return <input ref={this.ref} />;
-  }
+function Input(porps, ref) {
+  return <input ref={ref} />;
 }
+const ForwordRef = React.forwardRef(Input);
 class Bar extends React.Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
   }
   handleClick = () => {
-    this.inputRef.current.getFocus();
+    console.log(this.inputRef.current);
+    this.inputRef.current.focus();
   };
   render() {
     return (
       <div>
-        <Input ref={this.inputRef} />
+        <ForwordRef ref={this.inputRef} />
         <button onClick={this.handleClick}>+</button>
       </div>
       // <div>

@@ -15,7 +15,7 @@ function createElement(type, config, children) {
     key = config.key;
     delete config.key;
     ref = config.ref;
-    delete config.ref;
+    // delete config.ref;
   }
   const props = { ...config };
   // 如果函数形参超过3个说明有多个子节点，则需要用数组表示
@@ -36,9 +36,23 @@ function createRef() {
   return { current: null };
 }
 
+/**
+ * 实现函数组件ref的转发
+ * @param {*} FunctionComponent
+ * @returns
+ */
+function forwardRef(FunctionComponent) {
+  return class extends Component {
+    render() {
+      return FunctionComponent(this.props, this.props.ref);
+    }
+  };
+}
+
 const react = {
   createElement,
   Component,
   createRef,
+  forwardRef,
 };
 export default react;
