@@ -7,9 +7,15 @@ import { Component } from "./component";
  * @param {*} children 子节点
  */
 function createElement(type, config, children) {
+  let key;
+  let ref;
   if (config) {
     delete config.__source;
     delete config.__self;
+    key = config.key;
+    delete config.key;
+    ref = config.ref;
+    delete config.ref;
   }
   const props = { ...config };
   // 如果函数形参超过3个说明有多个子节点，则需要用数组表示
@@ -21,11 +27,18 @@ function createElement(type, config, children) {
   return {
     type,
     props,
+    key,
+    ref,
   };
+}
+
+function createRef() {
+  return { current: null };
 }
 
 const react = {
   createElement,
   Component,
+  createRef,
 };
 export default react;

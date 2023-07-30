@@ -23,19 +23,27 @@ import ReactDom from "./react-dom";
 class Bar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { count: 0 };
+    this.A = React.createRef();
+    this.B = React.createRef();
+    this.C = React.createRef();
   }
   handleClick = () => {
-    this.setState({ count: this.state.count + 1 });
-    this.setState({ count: this.state.count + 2 });
-    console.log(this.state.count);
+    this.C.current.value =
+      Number(this.A.current.value) + Number(this.B.current.value);
+    // console.log(this.state.count);
   };
   render() {
     return (
       <div>
-        <div>{this.state.count}</div>
-        <button onClick={this.handleClick}>+1</button>
+        <input ref={this.A} />
+        <input ref={this.B} />
+        <button onClick={this.handleClick}>+</button>
+        <input ref={this.C} />
       </div>
+      // <div>
+      //   <div>{this.state.count}</div>
+      //   <button onClick={this.handleClick}>+1</button>
+      // </div>
     );
   }
 }

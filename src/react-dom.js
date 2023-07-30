@@ -64,7 +64,7 @@ function mountClassComponent(vdom) {
  * @returns 真实dom
  */
 function createDOM(vdom) {
-  const { type, props, content } = vdom;
+  const { type, props, content, ref } = vdom;
   // 真实dom
   let dom = null;
   if (type === REACT_TEXT) {
@@ -93,6 +93,10 @@ function createDOM(vdom) {
   }
   // 保存下vdom对应的真实dom，用于后续dom-diff
   vdom.dom = dom;
+  // 将ref.current指向真实dom
+  if (ref) {
+    ref.current = dom;
+  }
   return dom;
 }
 /**
