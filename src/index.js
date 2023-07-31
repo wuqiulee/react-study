@@ -47,5 +47,4 @@ class Bar extends React.Component {
   }
 }
 let element = <Bar />;
-console.log(element, "element");
 ReactDom.render(element, document.getElementById("root"));
