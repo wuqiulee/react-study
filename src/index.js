@@ -1,5 +1,5 @@
-import React from "./react";
-import ReactDom from "./react-dom";
+import React from "react";
+import ReactDom from "react-dom";
 // let element = React.createElement(
 //   "div",
 //   {
@@ -20,29 +20,43 @@ import ReactDom from "./react-dom";
 //     </h1>
 //   );
 // }
-function Input(porps, ref) {
-  return <input ref={ref} />;
-}
-const ForwordRef = React.forwardRef(Input);
 class Bar extends React.Component {
+  static defaultProps = {
+    name: "张三",
+  };
   constructor(props) {
     super(props);
-    this.inputRef = React.createRef();
+    this.state = {
+      count: 0,
+    };
+    console.log("constructor");
+  }
+  componentWillMount() {
+    console.log("componentWillUnmount");
+  }
+  componentDidMount() {
+    console.log("componentDidMount");
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("shouldComponentUpdate");
+    return nextState.count % 2 === 0;
+  }
+  componentWillUpdate() {
+    console.log("componentWillUpdate");
+  }
+  componentDidUpdate() {
+    console.log("componentDidUpdate");
   }
   handleClick = () => {
-    console.log(this.inputRef.current);
-    this.inputRef.current.focus();
+    this.setState({ count: this.state.count + 1 });
   };
   render() {
+    console.log("render");
     return (
       <div>
-        <ForwordRef ref={this.inputRef} />
+        <span>{this.state.count}</span>
         <button onClick={this.handleClick}>+</button>
       </div>
-      // <div>
-      //   <div>{this.state.count}</div>
-      //   <button onClick={this.handleClick}>+1</button>
-      // </div>
     );
   }
 }

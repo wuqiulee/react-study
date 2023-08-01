@@ -51,8 +51,16 @@ function mountFunctionComponent(vdom) {
 function mountClassComponent(vdom) {
   const { type, props, ref } = vdom;
   const classInstance = new type(props);
+  // 执行componentWillMount钩子
+  if (classInstance.componentWillMount) {
+    classInstance.componentWillMount();
+  }
   // 执行类组件的render方法，返回vdom
   const renderVdom = classInstance.render();
+  // 执行componentDidMount钩子
+  if (classInstance.componentDidMount) {
+    classInstance.componentDidMount();
+  }
   // 将vdom存到类的实例上 用于后面的dom-diff,给类实例和外层类组件都存一份
   classInstance.oldRenderVdom = vdom.oldRenderVdom = renderVdom;
   // 如果类组件上有ref，则将ref指向类组件实例
