@@ -50,7 +50,8 @@ function mountFunctionComponent(vdom) {
  */
 function mountClassComponent(vdom) {
   const { type, props, ref } = vdom;
-  const classInstance = new type(props);
+  const componentProps = { ...props, ...type.defaultProps };
+  const classInstance = new type(componentProps);
   // 执行componentWillMount钩子
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();

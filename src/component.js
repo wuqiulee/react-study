@@ -17,10 +17,29 @@ export const UpdateQueue = {
  * @param {*} nextState
  */
 function shouldUpdate(classInstance, nextProps, nextState) {
+  // 维护一个是否要更新的变量
+  let willUpdate = true;
+  // 如果组件实例上有shouldComponentUpdate钩子，并且返回值为false则不更新
+  if (
+    classInstance.shouldComponentUpdate &&
+    !classInstance.shouldComponentUpdate(nextProps, nextState)
+  ) {
+    willUpdate = false;
+  }
+  // 如果更新则执行componentWillUpdate钩子
+  if (classInstance.componentWillUpdate && willUpdate) {
+    classInstance.componentWillUpdate();
+  }
+  // 组件不管是否更新props和state都会更新
+  if (nextProps) {
+    classInstance.props = nextProps;
+  }
   // 更新组件状态
   classInstance.state = nextState;
-  // 更新组件
-  classInstance.forceUpdate();
+  if (willUpdate) {
+    // 更新组件
+    classInstance.forceUpdate();
+  }
 }
 /**
  * 更新器，用于更新组件状态
@@ -103,5 +122,9 @@ export class Component {
     compareTwoVdom(oldDOM.parentNode, oldRenderVdom, newRenderVdom);
     // 更新老的vdom
     this.oldRenderVdom = newRenderVdom;
+    // 执行componentDidUpdate钩子
+    if (this.componentDidUpdate) {
+      this.componentDidUpdate(this.props, this.state);
+    }
   }
 }
