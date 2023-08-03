@@ -146,10 +146,78 @@ export function findDOM(vdom) {
  * @param {*} newVdom 新的vdom
  */
 export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
-  const oldDOM = findDOM(oldVdom);
-  const newDOM = createDOM(newVdom);
-  // 新的真实dom替换老的真实dom
-  parentDOM.replaceChild(newDOM, oldDOM);
+  // 如果新老vdom都不存在直接return,比如组件return null
+  if (!oldVdom && !newVdom) {
+    return;
+  } else if (oldVdom && !newVdom) {
+    // 如果老的vdom存在，新的vdom不存在，则要卸载老组件
+    const currentDom = findDOM(oldVdom);
+    currentDom.parentNode.removeChild(currentDom);
+    // 执行组件将要卸载钩子
+    if (oldVdom.classInstance?.componentWillUnmount) {
+      oldVdom.classInstance.componentWillUnmount();
+    }
+  } else if (!oldVdom && newVdom) {
+    // 如果老的vdom不存在，新的vdom存在，则创建新组建
+    const newDOM = createDOM(newVdom);
+    parentDOM.appendChild(newDOM);
+    return newVdom;
+  } else if (oldVdom && newVdom && oldVdom.type !== newVdom.type) {
+    // 如果新老vdom都存在，且类型不同，比如 div => p,则删除老的创建新的
+    const oldDOM = findDOM(oldVdom);
+    const newDOM = createDOM(newVdom);
+    oldDOM.parentNode.replaceChild(newDOM, oldDOM);
+    // 执行组件将要卸载钩子
+    if (oldVdom.classInstance?.componentWillUnmount) {
+      oldVdom.classInstance.componentWillUnmount();
+    }
+    return newVdom;
+  } else {
+    // 如果新老vdom都存在，且类型相同，则需深度递归 dom diff
+    updateElement(oldVdom, newVdom);
+    return newVdom;
+  }
+}
+// export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
+//   const oldDOM = findDOM(oldVdom);
+//   const newDOM = createDOM(newVdom);
+//   // 新的真实dom替换老的真实dom
+//   parentDOM.replaceChild(newDOM, oldDOM);
+// }
+
+/**
+ * 更新元素
+ * @param {*} oldVdom
+ * @param {*} newVdom
+ */
+function updateElement(oldVdom, newVdom) {
+  // 如果是原生组件，比如div
+  if (typeof oldVdom.type === "string") {
+    // 复用老的真实dom，让新的vdom上的dom等于老的vdom对应的真实dom
+    const currentDOM = (newVdom.dom = findDOM(oldVdom));
+    // 更新属性
+    updateProps(currentDOM, oldVdom.props, newVdom.props);
+    // 更新子元素
+    updateChildren(currentDOM, oldVdom.props.children, newVdom.props.children);
+  }
+}
+
+/**
+ * 更新儿子们
+ * @param {*} parentDOM
+ * @param {*} oldVChildren
+ * @param {*} newVChildren
+ */
+function updateChildren(parentDOM, oldVChildren, newVChildren) {
+  // 统一处理为数组，方便diff
+  oldVChildren = Array.isArray(oldVChildren) ? oldVChildren : [oldVChildren];
+  newVChildren = Array.isArray(newVChildren) ? newVChildren : [newVChildren];
+  // 找出新老最多子元素的数量
+  const maxLength = Math.max(oldVChildren.length, newVChildren.length);
+  // 一一对比
+  for (let i = 0; i < maxLength; i++) {
+    compareTwoVdom(parentDOM, oldVChildren[i], newVChildren[i]);
+  }
 }
 
 const ReactDom = {
