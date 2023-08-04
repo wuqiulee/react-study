@@ -1,5 +1,6 @@
 import { wrapToVdom } from "./utils";
 import { Component } from "./component";
+import { REACT_FORWORD_REF_TYPE } from "./constants";
 /**
  * 将jsx转换为虚拟dom
  * @param {*} type 元素类型
@@ -41,14 +42,19 @@ function createRef() {
  * @param {*} FunctionComponent
  * @returns
  */
-function forwardRef(FunctionComponent) {
-  return class extends Component {
-    render() {
-      return FunctionComponent(this.props, this.props.ref);
-    }
+// function forwardRef(FunctionComponent) {
+//   return class extends Component {
+//     render() {
+//       return FunctionComponent(this.props, this.props.ref);
+//     }
+//   };
+// }
+function forwardRef(render) {
+  return {
+    $$typeof: REACT_FORWORD_REF_TYPE,
+    render,
   };
 }
-
 const react = {
   createElement,
   Component,

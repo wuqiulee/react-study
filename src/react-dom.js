@@ -1,4 +1,4 @@
-import { REACT_TEXT } from "./constants";
+import { REACT_TEXT, REACT_FORWORD_REF_TYPE } from "./constants";
 import { addEvent } from "./event";
 /**
  * 渲染多个子vdom
@@ -72,6 +72,18 @@ function mountClassComponent(vdom) {
 }
 
 /**
+ * 挂在forwordrRef组件
+ * @param {*} vdom
+ * @returns
+ */
+function mountForwardComponent(vdom) {
+  const { type, props, ref } = vdom;
+  const renderVdom = type.render(props, ref);
+  vdom.oldRenderVdom = renderVdom;
+  return createDOM(renderVdom);
+}
+
+/**
  * 根据vdom创建真实dom
  * @param {*} vdom
  * @returns 真实dom
@@ -80,7 +92,9 @@ function createDOM(vdom) {
   const { type, props, content, ref } = vdom;
   // 真实dom
   let dom = null;
-  if (type === REACT_TEXT) {
+  if (type && type.$$typeof === REACT_FORWORD_REF_TYPE) {
+    return mountForwardComponent(vdom);
+  } else if (type === REACT_TEXT) {
     // 文本节点
     dom = document.createTextNode(content);
   } else if (typeof type === "function") {
