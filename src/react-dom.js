@@ -52,6 +52,8 @@ function mountClassComponent(vdom) {
   const { type, props, ref } = vdom;
   const componentProps = { ...props, ...type.defaultProps };
   const classInstance = new type(componentProps);
+  // 挂在类实例，方便后面更新类组件使用
+  vdom.classInstance = classInstance;
   // 执行componentWillMount钩子
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
@@ -163,8 +165,9 @@ export function findDOM(vdom) {
  * @param {*} parentDOM 父dom元素
  * @param {*} oldVdom 老的vdom
  * @param {*} newVdom 新的vdom
+ * @param {*} nextDOM 下一个真实dom
  */
-export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
+export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
   // 如果新老vdom都不存在直接return,比如组件return null
   if (!oldVdom && !newVdom) {
     return;
@@ -179,7 +182,11 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
   } else if (!oldVdom && newVdom) {
     // 如果老的vdom不存在，新的vdom存在，则创建新组建
     const newDOM = createDOM(newVdom);
-    parentDOM.appendChild(newDOM);
+    if (nextDOM) {
+      parentDOM.insertBefore(newVdom, nextDOM);
+    } else {
+      parentDOM.appendChild(newDOM);
+    }
     // 执行componentDidMount钩子
     if (newDOM.componentDidMount) {
       newDOM.componentDidMount();
@@ -218,15 +225,57 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
  * @param {*} newVdom
  */
 function updateElement(oldVdom, newVdom) {
-  // 如果是原生组件，比如div
-  if (typeof oldVdom.type === "string") {
+  // 新老vdom都是文本节点
+  if (oldVdom.type === REACT_TEXT && newVdom.type === REACT_TEXT) {
+    const currentDOM = (newVdom.dom = findDOM(oldVdom));
+    // 文本内容不一致才更新
+    if (oldVdom.props.content !== newVdom.props.content) {
+      currentDOM.textContent = newVdom.props.content;
+    }
+  } else if (typeof oldVdom.type === "string") {
+    // 如果是原生组件，比如div
     // 复用老的真实dom，让新的vdom上的dom等于老的vdom对应的真实dom
     const currentDOM = (newVdom.dom = findDOM(oldVdom));
     // 更新属性
     updateProps(currentDOM, oldVdom.props, newVdom.props);
     // 更新子元素
     updateChildren(currentDOM, oldVdom.props.children, newVdom.props.children);
+  } else if (typeof oldVdom.type === "function") {
+    if (oldVdom.type.isReactComponent) {
+      updateClassComponent(oldVdom, newVdom);
+    } else {
+      updateFunctionComponent(oldVdom, newVdom);
+    }
   }
+}
+
+/**
+ * 更新类组件
+ * @param {*} oldVdom
+ * @param {*} newVdom
+ */
+function updateClassComponent(oldVdom, newVdom) {
+  const classInstance = (newVdom.classInstance = oldVdom.classInstance);
+  newVdom.oldRenderVdom = oldVdom.oldRenderVdom;
+  // 执行componentWillReceiveProps钩子
+  if (classInstance.componentWillReceiveProps) {
+    classInstance.componentWillReceiveProps();
+  }
+  classInstance.updater.emitUpdate(newVdom.props);
+}
+
+/**
+ * 更新函数组件
+ * @param {*} oldVdom
+ * @param {*} newVdom
+ */
+function updateFunctionComponent(oldVdom, newVdom) {
+  const parentDOM = findDOM(oldVdom).parentNode;
+  const { type, props } = newVdom;
+  const renderVdom = type(props);
+  newVdom.oldRenderVdom = renderVdom;
+  // 递归对比差异
+  compareTwoVdom(parentDOM, oldVdom.oldRenderVdom, renderVdom);
 }
 
 /**
@@ -243,7 +292,16 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
   const maxLength = Math.max(oldVChildren.length, newVChildren.length);
   // 一一对比
   for (let i = 0; i < maxLength; i++) {
-    compareTwoVdom(parentDOM, oldVChildren[i], newVChildren[i]);
+    // 找到当前vdom的下一个真实dom，方便insertBefore
+    const nextVDOM = oldVChildren.find(
+      (item, index) => index > i && item && findDOM(item)
+    );
+    compareTwoVdom(
+      parentDOM,
+      oldVChildren[i],
+      newVChildren[i],
+      findDOM(nextVDOM)
+    );
   }
 }
 
