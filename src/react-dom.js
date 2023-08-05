@@ -58,17 +58,18 @@ function mountClassComponent(vdom) {
   }
   // 执行类组件的render方法，返回vdom
   const renderVdom = classInstance.render();
-  // 执行componentDidMount钩子
-  if (classInstance.componentDidMount) {
-    classInstance.componentDidMount();
-  }
   // 将vdom存到类的实例上 用于后面的dom-diff,给类实例和外层类组件都存一份
   classInstance.oldRenderVdom = vdom.oldRenderVdom = renderVdom;
   // 如果类组件上有ref，则将ref指向类组件实例
   if (ref) {
     ref.current = classInstance;
   }
-  return createDOM(renderVdom);
+  const dom = createDOM(renderVdom);
+  // 把componentDidMount钩子存到真实dom上
+  if (classInstance.componentDidMount) {
+    dom.componentDidMount = classInstance.componentDidMount.bind(this);
+  }
+  return dom;
 }
 
 /**
@@ -133,6 +134,10 @@ function createDOM(vdom) {
 function render(vdom, container) {
   const root = createDOM(vdom);
   container.appendChild(root);
+  // 执行componentDidMount钩子
+  if (root.componentDidMount) {
+    root.componentDidMount();
+  }
 }
 
 /**
@@ -175,6 +180,10 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
     // 如果老的vdom不存在，新的vdom存在，则创建新组建
     const newDOM = createDOM(newVdom);
     parentDOM.appendChild(newDOM);
+    // 执行componentDidMount钩子
+    if (newDOM.componentDidMount) {
+      newDOM.componentDidMount();
+    }
     return newVdom;
   } else if (oldVdom && newVdom && oldVdom.type !== newVdom.type) {
     // 如果新老vdom都存在，且类型不同，比如 div => p,则删除老的创建新的
@@ -184,6 +193,10 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
     // 执行组件将要卸载钩子
     if (oldVdom.classInstance?.componentWillUnmount) {
       oldVdom.classInstance.componentWillUnmount();
+    }
+    // 执行componentDidMount钩子
+    if (newDOM.componentDidMount) {
+      newDOM.componentDidMount();
     }
     return newVdom;
   } else {
