@@ -30,9 +30,6 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  componentWillMount() {
-    console.log("componentWillUnmount");
-  }
   componentDidMount() {
     console.log("componentDidMount");
   }
