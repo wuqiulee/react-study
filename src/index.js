@@ -30,9 +30,6 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  componentDidMount() {
-    console.log("componentDidMount");
-  }
   shouldComponentUpdate(nextProps, nextState) {
     console.log("shouldComponentUpdate");
     return nextState.count % 2 === 0;
