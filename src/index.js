@@ -30,10 +30,6 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("shouldComponentUpdate");
-    return nextState.count % 2 === 0;
-  }
   componentWillUpdate() {
     console.log("componentWillUpdate");
   }
