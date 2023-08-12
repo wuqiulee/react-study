@@ -30,9 +30,6 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  componentWillUpdate() {
-    console.log("componentWillUpdate");
-  }
   componentDidUpdate() {
     console.log("componentDidUpdate");
   }
