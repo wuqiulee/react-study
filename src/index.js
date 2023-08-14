@@ -30,9 +30,6 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  componentDidUpdate() {
-    console.log("componentDidUpdate");
-  }
   handleClick = () => {
     this.setState({ count: this.state.count + 1 });
   };
