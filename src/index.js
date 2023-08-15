@@ -1,25 +1,5 @@
 import React from "react";
 import ReactDom from "react-dom";
-// let element = React.createElement(
-//   "div",
-//   {
-//     className: "title",
-//     style: {
-//       color: "red",
-//     },
-//   },
-//   React.createElement("span", null, "hello"),
-//   "world"
-// );
-// function Bar(props) {
-//   // return React.createElement("h1", null, "name:", props.name);
-//   return (
-//     <h1>
-//       <span>name:</span>
-//       {props.name}
-//     </h1>
-//   );
-// }
 class Bar extends React.Component {
   static defaultProps = {
     name: "张三",
