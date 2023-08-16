@@ -16,7 +16,6 @@ class Bar extends React.Component {
   render() {
     return (
       <div>
-        <span>{this.state.count}</span>
         <button onClick={this.handleClick}>+</button>
       </div>
     );
