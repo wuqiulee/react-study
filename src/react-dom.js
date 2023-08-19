@@ -52,6 +52,10 @@ function mountClassComponent(vdom) {
   const { type, props, ref } = vdom;
   const componentProps = { ...props, ...type.defaultProps };
   const classInstance = new type(componentProps);
+  // 挂载context
+  if (type.contextType) {
+    classInstance.context = type.contextType.Provider._value;
+  }
   // 挂在类实例，方便后面更新类组件使用
   vdom.classInstance = classInstance;
   // 执行componentWillMount钩子

@@ -126,6 +126,9 @@ export class Component {
     const oldRenderVdom = this.oldRenderVdom;
     // 关键步骤 根据老的vdom找出老的真实dom
     const oldDOM = findDOM(oldRenderVdom);
+    if (this.constructor.contextType) {
+      this.context = this.constructor.contextType.Provider._value;
+    }
     // 获取新的vdom
     const newRenderVdom = this.render();
     const extraArgs = this.getSnapshotBeforeUpdate();
