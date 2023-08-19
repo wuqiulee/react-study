@@ -34,8 +34,18 @@ function shouldUpdate(classInstance, nextProps, nextState) {
   if (nextProps) {
     classInstance.props = nextProps;
   }
-  // 更新组件状态
-  classInstance.state = nextState;
+  if (classInstance.getDerivedStateFromProps) {
+    const nextState = classInstance.getDerivedStateFromProps(
+      nextProps,
+      classInstance.state
+    );
+    if (nextState) {
+      classInstance.state = nextState;
+    }
+  } else {
+    // 更新组件状态
+    classInstance.state = nextState;
+  }
   if (willUpdate) {
     // 更新组件
     classInstance.forceUpdate();

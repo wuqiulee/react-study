@@ -300,7 +300,7 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
       parentDOM,
       oldVChildren[i],
       newVChildren[i],
-      findDOM(nextVDOM)
+      nextVDOM && findDOM(nextVDOM)
     );
   }
 }
