@@ -128,13 +128,14 @@ export class Component {
     const oldDOM = findDOM(oldRenderVdom);
     // 获取新的vdom
     const newRenderVdom = this.render();
+    const extraArgs = this.getSnapshotBeforeUpdate();
     // 比较两颗vdom，得到差异更新到真实dom上
     compareTwoVdom(oldDOM.parentNode, oldRenderVdom, newRenderVdom);
     // 更新老的vdom
     this.oldRenderVdom = newRenderVdom;
     // 执行componentDidUpdate钩子
     if (this.componentDidUpdate) {
-      this.componentDidUpdate(this.props, this.state);
+      this.componentDidUpdate(this.props, this.state, extraArgs);
     }
   }
 }
