@@ -33,6 +33,22 @@ function createElement(type, config, children) {
   };
 }
 
+/**
+ * 根据老元素 克隆出新元素
+ * @param {*} oldElement
+ * @param {*} newProps
+ * @param {*} children
+ */
+function cloneElement(oldElement, newProps, children) {
+  if (arguments.length > 3) {
+    children = Array.prototype.slice.call(arguments, 2).map(wrapToVdom);
+  } else {
+    children = wrapToVdom(children);
+  }
+  const props = { ...oldElement.props, ...newProps, children };
+  return { ...oldElement, props };
+}
+
 function createRef() {
   return { current: null };
 }
@@ -61,11 +77,14 @@ function createContext() {
     Provider._value = value;
     return children;
   };
-  const Consumer = () => {};
+  const Consumer = ({ children }) => {
+    return children(Provider._value);
+  };
   return { Provider, Consumer };
 }
 const react = {
   createElement,
+  cloneElement,
   Component,
   createRef,
   forwardRef,
