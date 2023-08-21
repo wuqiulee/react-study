@@ -1,6 +1,10 @@
 import { wrapToVdom } from "./utils";
 import { Component } from "./component";
-import { REACT_FORWORD_REF_TYPE } from "./constants";
+import {
+  REACT_FORWORD_REF_TYPE,
+  REACT_PROVIDER,
+  REACT_CONTEXT,
+} from "./constants";
 /**
  * 将jsx转换为虚拟dom
  * @param {*} type 元素类型
@@ -72,15 +76,21 @@ function forwardRef(render) {
   };
 }
 
+// function createContext() {
+//   const Provider = ({ value, children }) => {
+//     Provider._value = value;
+//     return children;
+//   };
+//   const Consumer = ({ children }) => {
+//     return children(Provider._value);
+//   };
+//   return { Provider, Consumer };
+// }
 function createContext() {
-  const Provider = ({ value, children }) => {
-    Provider._value = value;
-    return children;
-  };
-  const Consumer = ({ children }) => {
-    return children(Provider._value);
-  };
-  return { Provider, Consumer };
+  let context = { $$typeof: REACT_CONTEXT };
+  context.Provider = { $$typeof: REACT_PROVIDER, _context: context };
+  context.Consumer = { $$typeof: REACT_CONTEXT, _context: context };
+  return context;
 }
 const react = {
   createElement,
