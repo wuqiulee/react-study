@@ -1,9 +1,10 @@
-import { wrapToVdom } from "./utils";
+import { wrapToVdom, shallowEqual } from "./utils";
 import { Component } from "./component";
 import {
   REACT_FORWORD_REF_TYPE,
   REACT_PROVIDER,
   REACT_CONTEXT,
+  REACT_MEMO,
 } from "./constants";
 /**
  * 将jsx转换为虚拟dom
@@ -27,7 +28,9 @@ function createElement(type, config, children) {
   if (arguments.length > 3) {
     props.children = Array.prototype.slice.call(arguments, 2).map(wrapToVdom);
   } else {
-    props.children = wrapToVdom(children);
+    if (typeof children !== "undefined") {
+      props.children = wrapToVdom(children);
+    }
   }
   return {
     type,
@@ -92,6 +95,13 @@ function createContext() {
   context.Consumer = { $$typeof: REACT_CONTEXT, _context: context };
   return context;
 }
+function memo(type, compare = shallowEqual) {
+  return {
+    $$typeof: REACT_MEMO,
+    type, //原来那个真正的函数组件
+    compare,
+  };
+}
 const react = {
   createElement,
   cloneElement,
@@ -99,5 +109,6 @@ const react = {
   createRef,
   forwardRef,
   createContext,
+  memo,
 };
 export default react;
