@@ -1,9 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
 class Bar extends React.Component {
-  static defaultProps = {
-    name: "张三",
-  };
   constructor(props) {
     super(props);
     this.state = {
