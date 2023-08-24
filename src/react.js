@@ -65,13 +65,6 @@ function createRef() {
  * @param {*} FunctionComponent
  * @returns
  */
-// function forwardRef(FunctionComponent) {
-//   return class extends Component {
-//     render() {
-//       return FunctionComponent(this.props, this.props.ref);
-//     }
-//   };
-// }
 function forwardRef(render) {
   return {
     $$typeof: REACT_FORWORD_REF_TYPE,
