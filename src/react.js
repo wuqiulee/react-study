@@ -72,16 +72,6 @@ function forwardRef(render) {
   };
 }
 
-// function createContext() {
-//   const Provider = ({ value, children }) => {
-//     Provider._value = value;
-//     return children;
-//   };
-//   const Consumer = ({ children }) => {
-//     return children(Provider._value);
-//   };
-//   return { Provider, Consumer };
-// }
 function createContext() {
   let context = { $$typeof: REACT_CONTEXT };
   context.Provider = { $$typeof: REACT_PROVIDER, _context: context };
