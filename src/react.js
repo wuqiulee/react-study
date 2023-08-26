@@ -6,7 +6,7 @@ import {
   REACT_CONTEXT,
   REACT_MEMO,
 } from "./constants";
-import { useState } from "./component";
+import { useState, useMemo } from "./component";
 /**
  * 将jsx转换为虚拟dom
  * @param {*} type 元素类型
@@ -97,5 +97,6 @@ const react = {
   createContext,
   memo,
   useState,
+  useMemo,
 };
 export default react;

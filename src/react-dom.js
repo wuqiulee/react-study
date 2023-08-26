@@ -415,6 +415,27 @@ export function useState(initialState) {
   };
   return [hookState[hookIndex++], setState];
 }
+export function useMemo(factoryFn, deps) {
+  if (hookState[hookIndex]) {
+    // 说明不是第一次是更新
+    let [lastMemo, lastDeps] = hookState[hookIndex];
+    let inequality = deps.some((dep, index) => dep !== lastDeps[index]);
+    // 如果依赖数组有一项不相同就返回新的值并将最新值保存起来，否则返回上一次的值
+    if (inequality) {
+      let newMemo = factoryFn();
+      hookState[hookIndex++] = [newMemo, deps];
+      return newMemo;
+    } else {
+      hookIndex++;
+      return lastMemo;
+    }
+  } else {
+    // 第一次进来将当前函数返回值保存起来，并将该值返回
+    let newMemo = factoryFn();
+    hookState[hookIndex++] = [newMemo, deps];
+    return newMemo;
+  }
+}
 
 const ReactDom = {
   render,
