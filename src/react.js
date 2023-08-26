@@ -6,6 +6,7 @@ import {
   REACT_CONTEXT,
   REACT_MEMO,
 } from "./constants";
+import { useState } from "./component";
 /**
  * 将jsx转换为虚拟dom
  * @param {*} type 元素类型
@@ -78,6 +79,7 @@ function createContext() {
   context.Consumer = { $$typeof: REACT_CONTEXT, _context: context };
   return context;
 }
+
 function memo(type, compare = shallowEqual) {
   return {
     $$typeof: REACT_MEMO,
@@ -85,6 +87,7 @@ function memo(type, compare = shallowEqual) {
     compare,
   };
 }
+
 const react = {
   createElement,
   cloneElement,
@@ -93,5 +96,6 @@ const react = {
   forwardRef,
   createContext,
   memo,
+  useState,
 };
 export default react;

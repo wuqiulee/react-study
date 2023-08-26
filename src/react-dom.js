@@ -6,6 +6,11 @@ import {
   REACT_MEMO,
 } from "./constants";
 import { addEvent } from "./event";
+
+let hookState = []; //这里存放着所有的状态
+let hookIndex = 0; //当前的执行的hook的索引
+let scheduleUpdate; //调度更新方法
+
 /**
  * 渲染多个子vdom
  * @param {*} childrenVdoms
@@ -175,6 +180,16 @@ function createDOM(vdom) {
  * @param {*} vdom 虚拟dom
  */
 function render(vdom, container) {
+  mount(vdom, container);
+  scheduleUpdate = () => {
+    // 让hooks下标置0 从新开始渲染
+    hookIndex = 0;
+    // 深度对比vdom
+    compareTwoVdom(container, vdom, vdom);
+  };
+}
+
+function mount(vdom, container) {
   const root = createDOM(vdom);
   container.appendChild(root);
   // 执行componentDidMount钩子
@@ -380,6 +395,25 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
       nextVDOM && findDOM(nextVDOM)
     );
   }
+}
+
+export function useState(initialState) {
+  // 如果不存在则给当前hook赋初始state
+  if (!hookState[hookIndex]) {
+    hookState[hookIndex] = initialState;
+  }
+  // 保存当前hook下标
+  const currenIndex = hookIndex;
+  // 更新state方法
+  const setState = (newState) => {
+    hookState[currenIndex] =
+      typeof newState === "function"
+        ? newState(hookState[currenIndex])
+        : newState;
+    // 执行调度更新方法
+    scheduleUpdate();
+  };
+  return [hookState[hookIndex++], setState];
 }
 
 const ReactDom = {
