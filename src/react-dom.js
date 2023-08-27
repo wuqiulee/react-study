@@ -436,6 +436,25 @@ export function useMemo(factoryFn, deps) {
     return newMemo;
   }
 }
+export function useCallback(callbackFn, deps) {
+  if (hookState[hookIndex]) {
+    // 说明不是第一次是更新
+    let [lastCallback, lastDeps] = hookState[hookIndex];
+    let inequality = deps.some((dep, index) => dep !== lastDeps[index]);
+    // 如果依赖数组有一项不相同就返回新的回调并将最近回调函数保存起来，否则返回上一次回调
+    if (inequality) {
+      hookState[hookIndex++] = [callbackFn, deps];
+      return callbackFn;
+    } else {
+      hookIndex++;
+      return lastCallback;
+    }
+  } else {
+    // 第一次进来将当前回调函数和依赖数组存起来，并将当前回调返回
+    hookState[hookIndex++] = [callbackFn, deps];
+    return callbackFn;
+  }
+}
 
 const ReactDom = {
   render,
