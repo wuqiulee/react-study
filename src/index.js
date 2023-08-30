@@ -7,7 +7,7 @@ class Bar extends React.Component {
       count: 0,
     };
   }
-  handleClick = () => {};
+  // handleClick = () => {};
   render() {
     return (
       <div>
