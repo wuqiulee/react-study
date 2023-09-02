@@ -486,6 +486,22 @@ export function useEffect(callback, deps) {
   }
 }
 
+export function useReducer(reducer, initialState) {
+  if (!hookState[hookIndex]) {
+    hookState[hookIndex] = initialState;
+  }
+  // 保存当前hook下标
+  const currentIndex = hookIndex;
+  // 改变state的方法
+  const dispatch = (action) => {
+    hookState[currentIndex] = reducer(hookState[currentIndex], action);
+    // 执行调度更新方法
+    scheduleUpdate();
+  };
+  // 返回当前的state和dispatch方法
+  return [hookState[hookIndex++], dispatch];
+}
+
 const ReactDom = {
   render,
 };
