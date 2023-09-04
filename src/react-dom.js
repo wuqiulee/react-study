@@ -502,6 +502,37 @@ export function useReducer(reducer, initialState) {
   return [hookState[hookIndex++], dispatch];
 }
 
+export function useLayoutEffect(callback, deps) {
+  if (hookState[hookIndex]) {
+    const [destroy, lastDeps] = hookState[hookIndex];
+    const inequality = deps.some((dep, index) => dep !== lastDeps[index]);
+    // 如果依赖数组有变化，则需重新执行effect回调
+    if (inequality) {
+      if (destroy) {
+        // 如果effect有返回值且返回值不是函数的话，则抛出异常
+        if (typeof destroy !== "function") {
+          throw new TypeError("destroy is not a function");
+        } else {
+          // 如果effect有返回值且返回值是函数的话，则执行该函数
+          destroy();
+        }
+      }
+      queueMicrotask(() => {
+        const destroy = callback();
+        hookState[hookIndex++] = [destroy, deps];
+      });
+    }
+  } else {
+    // 初次渲染时候，利用queueMicrotask模拟开启一个微任务
+    queueMicrotask(() => {
+      // effect回调函数的返回值
+      const destroy = callback();
+      // 将当前effect中的销毁函数和依赖数组保存起来
+      hookState[hookIndex++] = [destroy, deps];
+    });
+  }
+}
+
 const ReactDom = {
   render,
 };

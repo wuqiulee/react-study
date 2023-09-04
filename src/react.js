@@ -12,6 +12,7 @@ import {
   useCallback,
   useEffect,
   useReducer,
+  useLayoutEffect,
 } from "./component";
 /**
  * 将jsx转换为虚拟dom
@@ -107,5 +108,6 @@ const react = {
   useCallback,
   useEffect,
   useReducer,
+  useLayoutEffect,
 };
 export default react;
