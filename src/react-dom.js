@@ -533,6 +533,15 @@ export function useLayoutEffect(callback, deps) {
   }
 }
 
+export function useRef() {
+  if (hookState[hookIndex]) {
+    return hookState[hookIndex++];
+  } else {
+    hookState[hookIndex] = { current: null };
+    return hookState[hookIndex++];
+  }
+}
+
 const ReactDom = {
   render,
 };

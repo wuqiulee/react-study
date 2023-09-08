@@ -13,6 +13,7 @@ import {
   useEffect,
   useReducer,
   useLayoutEffect,
+  useRef,
 } from "./component";
 /**
  * 将jsx转换为虚拟dom
@@ -109,5 +110,6 @@ const react = {
   useEffect,
   useReducer,
   useLayoutEffect,
+  useRef,
 };
 export default react;
