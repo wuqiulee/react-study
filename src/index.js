@@ -8,11 +8,7 @@ class Bar extends React.Component {
     };
   }
   render() {
-    return (
-      <div>
-        <button onClick={this.handleClick}>+</button>
-      </div>
-    );
+    return <div></div>;
   }
 }
 let element = <Bar />;
