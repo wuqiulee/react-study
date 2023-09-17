@@ -30,7 +30,6 @@ function createElement(type, config, children) {
     key = config.key;
     delete config.key;
     ref = config.ref;
-    // delete config.ref;
   }
   const props = { ...config };
   // 如果函数形参超过3个说明有多个子节点，则需要用数组表示
