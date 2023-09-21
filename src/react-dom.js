@@ -40,7 +40,6 @@ function updateProps(dom, oldProps, newProps) {
       }
     } else if (key.startsWith("on")) {
       // 绑定事件
-      // dom[key.toLocaleLowerCase()] = newProps[key];
       addEvent(dom, key.toLocaleLowerCase(), newProps[key]);
     } else {
       if (newProps[key]) {
