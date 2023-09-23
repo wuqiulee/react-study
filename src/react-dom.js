@@ -269,12 +269,6 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
     return newVdom;
   }
 }
-// export function compareTwoVdom(parentDOM, oldVdom, newVdom) {
-//   const oldDOM = findDOM(oldVdom);
-//   const newDOM = createDOM(newVdom);
-//   // 新的真实dom替换老的真实dom
-//   parentDOM.replaceChild(newDOM, oldDOM);
-// }
 
 /**
  * 更新元素
