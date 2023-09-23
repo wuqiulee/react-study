@@ -8,5 +8,4 @@ class Bar extends React.Component {
     return <div></div>;
   }
 }
-let element = <Bar />;
-ReactDom.render(element, document.getElementById("root"));
+ReactDom.render(<Bar />, document.getElementById("root"));
